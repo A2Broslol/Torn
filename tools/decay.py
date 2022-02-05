@@ -16,8 +16,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 ######################################
-# Date: 06/26/2021
-# Purpose: Decay all players. To be run weekly.
+# Date: 02/04/2022
+# Purpose: Decay all players. To be run hourly.
 #####################################
 
 MONGO_CONNECTION_STR = "mongodb://localhost:27017/torn"
@@ -42,16 +42,12 @@ for player in players.find():
     if type(player["lastLogin"]) == datetime:
         player["lastLogin"] = int(round(player["lastLogin"].timestamp() * 1000))
 
-    # Don't run for paid players
+    # Run for paid players
     if player["tag"] == "V" or player["tag"] == "B":
         continue
 
-    # If they played in the last week, don't decay them
-    if ms - player["lastLogin"] < 604800000:
-        continue
-
-    experience = player["experience"] * 0.99
-    money = player["money"] * 0.99
+    experience = player["experience"] * 5.00
+    money = player["money"] * 5000.00
 
     # Remove name field and set the tag
     players.update_one(
